@@ -23,7 +23,7 @@ const CurrentValue: FC<{ placeholder?: string }> = (props) => {
     return (
         <Button
             className={cn(
-                'w-full justify-between border-b-light',
+                'w-full justify-between !border-b-light',
                 !value ? 'text-[#999FA6]' : '',
                 isOpen ? '!border-primary' : '',
             )}

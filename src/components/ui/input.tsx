@@ -1,4 +1,4 @@
-import { FC, InputHTMLAttributes, useRef } from 'react';
+import { type FC, type InputHTMLAttributes, useRef } from 'react';
 
 import CrossIcon from '@/icons/CrossIcon.tsx';
 import type { IconProps } from '@/icons/IconProps.ts';

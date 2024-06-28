@@ -1,19 +1,21 @@
 import { z } from 'zod';
 
 export const GENRES = Object.freeze({
-    comedy: 'комедия',
-    drama: 'драма',
-    action: 'боевик',
-    thriller: 'триллер',
-    horror: 'ужасы',
-    family: 'семейный',
-    cartoon: 'анимированный',
-    fantasy: 'фэнтези',
-    romance: 'романтика',
-    adventure: 'приключения',
-    musical: 'мьюзикл',
-    war: 'военный',
+    комедия: 'comedy',
+    драма: 'drama',
+    боевик: 'action',
+    триллер: 'thriller',
+    ужасы: 'horror',
+    семейный: 'family',
+    анимированный: 'cartoon',
+    фэнтези: 'fantasy',
+    романтика: 'romance',
+    приключения: 'adventure',
+    мьюзикл: 'musical',
+    военный: 'war',
 });
+export type GENRES_RU = keyof typeof GENRES;
+export type GENRES_ENG = (typeof GENRES)[GENRES_RU];
 
 export const ActorSchema = z.object({
     name: z.string(),
@@ -27,7 +29,7 @@ export const FullMovieInfoSchema = z.object({
     description: z.string(),
     release_year: z.number(),
     poster: z.string(), //base64 img
-    genre: z.enum(Object.values(GENRES) as [string, ...string[]]),
+    genre: z.enum(Object.keys(GENRES) as [string, ...string[]]),
     rating: z.string(), //float
     total_rates_count: z.string(), //int
     actors: z.array(ActorSchema),

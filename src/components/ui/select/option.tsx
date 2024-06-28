@@ -25,7 +25,7 @@ const Option: FC<Props> = ({
             setValue(value);
             setIsOpen(false);
         },
-        [value, setValue, onClick],
+        [onClick, setValue, value, setIsOpen],
     );
     return (
         <Button

@@ -1,37 +1,43 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC, type ReactNode, useState } from 'react';
 
 import Input from '@/components/ui/input.tsx';
 import { Option, Select } from '@/components/ui/select';
 
-import { getPage } from '@/api.ts';
+import { useGetPageQuery } from '@/api/backend.ts';
 import FilmPreview from '@/components/FIlmPreview.tsx';
+import LoaderIcon from '@/icons/LoaderIcon.tsx';
 // import { useSearchParams } from 'react-router-dom';
 import { GENRES } from '@/schemas/film.ts';
-import type { ShortMovieInfo } from '@/schemas/film.ts';
 
 const SearchView: FC = () => {
     // const [searchParams, setSearchParams] = useSearchParams();
     const [value, setValue] = useState('');
 
-    const [films, setFilms] = useState<ShortMovieInfo[]>([]);
-    useEffect(() => {
-        (async () => {
-            const result = await getPage(1);
-            if (!result.success) {
-                return 'Error';
-            }
-            setFilms(result.data.search_result);
-        })();
-    }, []);
+    const { data: films, isLoading } = useGetPageQuery({});
+
+    const mainContent: ReactNode = isLoading ? (
+        <LoaderIcon className="animate-spin" />
+    ) : !films || !films.success ? (
+        <div className="flex flex-col gap-2">
+            <span> Error </span>
+            <pre> {JSON.stringify(films?.error, null, 4)}</pre>
+        </div>
+    ) : (
+        <>
+            {films.data.search_result.map((film) => (
+                <FilmPreview {...film} key={'film' + film.id} />
+            ))}
+        </>
+    );
 
     return (
-        <div className="flex flex-col md:flex-row justify-start items-start gap-5">
+        <div className="flex flex-col md:flex-row justify-start items-start gap-5 flex-1">
             <div className="flex flex-col bg-white w-[400px] rounded-lg p-6 gap-5">
                 <b>Фильтры</b>
                 <div className="flex flex-col gap-1">
                     <span>Жанр</span>
                     <Select placeholder="Выберите жанр">
-                        {Object.values(GENRES).map((genre) => (
+                        {Object.keys(GENRES).map((genre) => (
                             <Option key={genre} value={genre}>
                                 <span className="first-letter:capitalize">
                                     {genre}
@@ -48,12 +54,12 @@ const SearchView: FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col items-center md:items-start gap-4">
+            <div className="flex flex-col items-center md:items-start gap-4 w-full h-full">
                 <Input
                     search
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
-                    containerClassName={'w-[400px]'}
+                    containerClassName="w-[400px]"
                     placeholder="Название фильма"
                     crossIconProps={{
                         onClick: () => {
@@ -64,9 +70,9 @@ const SearchView: FC = () => {
                             (value ? 'opacity-100' : ' opacity-0'),
                     }}
                 />
-                {films.map((film) => (
-                    <FilmPreview {...film} key={'film' + film.id} />
-                ))}
+                <main className="w-full flex justify-center items-center flex-col gap-4 flex-1">
+                    {mainContent}
+                </main>
             </div>
         </div>
     );

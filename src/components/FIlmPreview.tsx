@@ -1,5 +1,7 @@
 import { type FC } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import StarIcon from '@/icons/StarIcon.tsx';
 import type { ShortMovieInfo } from '@/schemas/film.ts';
 import { cn } from '@/utils/cn.ts';
@@ -8,7 +10,10 @@ type Props = ShortMovieInfo;
 const FilmPreview: FC<Props> = (props) => {
     const roundedRating = Math.round(parseFloat(props.rating));
     return (
-        <div className="flex justify-between transition bg-white hover:bg-[#F8F8F8] rounded-lg p-6 w-full">
+        <Link
+            to={'/movie/' + props.id}
+            className="flex justify-between transition bg-white hover:bg-[#F8F8F8] rounded-lg p-6 w-full"
+        >
             <div className="gap-6 flex items-start">
                 <img
                     src={props.poster}
@@ -103,7 +108,7 @@ const FilmPreview: FC<Props> = (props) => {
                     </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 
