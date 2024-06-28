@@ -17,12 +17,13 @@ const Option: FC<Props> = ({
     className,
     ...props
 }) => {
-    const { setValue } = useSelectContext();
+    const { setValue, setIsOpen } = useSelectContext();
     const handler = useCallback(
         (e: MouseEvent<HTMLButtonElement>) => {
             e.stopPropagation();
             onClick?.(e);
             setValue(value);
+            setIsOpen(false);
         },
         [value, setValue, onClick],
     );

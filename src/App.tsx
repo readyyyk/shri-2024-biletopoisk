@@ -6,7 +6,9 @@ function App() {
     return (
         <div className="min-h-screen bg-[#ededed]">
             <Header />
-            <Outlet />
+            <div className="px-8 py-5">
+                <Outlet />
+            </div>
         </div>
     );
 }

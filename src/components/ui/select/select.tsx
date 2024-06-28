@@ -1,7 +1,6 @@
 import {
     type FC,
     type HTMLAttributes,
-    type MouseEvent,
     type ReactNode,
     useCallback,
 } from 'react';
@@ -18,25 +17,21 @@ import { cn } from '@/utils/cn.ts';
 
 const CurrentValue: FC<{ placeholder?: string }> = (props) => {
     const { value, isOpen, setIsOpen } = useSelectContext();
-    const handler = useCallback(
-        (e: MouseEvent<HTMLButtonElement>) => {
-            e.stopPropagation();
-            setIsOpen((a) => !a);
-        },
-        [setIsOpen],
-    );
+    const handler = useCallback(() => setIsOpen((a) => !a), [setIsOpen]);
 
     const placeholder = props.placeholder ?? 'Select value';
     return (
         <Button
             className={cn(
-                'w-full justify-between hover:border-b-light',
+                'w-full justify-between border-b-light',
                 !value ? 'text-[#999FA6]' : '',
                 isOpen ? '!border-primary' : '',
             )}
             onClick={handler}
         >
-            {value || placeholder}
+            <span className="first-letter:uppercase">
+                {value || placeholder}
+            </span>
             <SelectIndicatorIcon
                 className={cn(
                     'transition duration-200',
