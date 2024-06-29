@@ -6,15 +6,15 @@ import ArrowRightButton from '@/components/ui/ArrowRightButton.tsx';
 import Input from '@/components/ui/input.tsx';
 import { Option, Select } from '@/components/ui/select';
 
-import { useGetPageQuery } from '@/api/backend.ts';
 import FilmPreview from '@/components/FIlmPreview.tsx';
-import LoaderIcon from '@/icons/LoaderIcon.tsx';
+import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
 import {
     type GENRES_ENG,
     GENRES_ENtoRU,
     GENRES_RUtoEN,
     YEARS,
 } from '@/schemas/film.ts';
+import { useGetPageQuery } from '@/slices/backend.ts';
 
 const SearchView: FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -71,7 +71,14 @@ const SearchView: FC = () => {
             </div>
         );
     } else if (!films.data.search_result.length) {
-        mainContent = <span>Ничего не найдено</span>;
+        mainContent = (
+            <div className="text-center max-w-96">
+                <p className="text-lg text-[#1B1F23]"> Фильмы не найдены</p>
+                <p className="text-[#999FA6]">
+                    Измените запрос и попробуйте снова
+                </p>
+            </div>
+        );
     } else {
         mainContent = (
             <>
@@ -154,7 +161,7 @@ const SearchView: FC = () => {
                     search
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    containerClassName="w-[400px]"
+                    containerClassName="w-[400px] border-white"
                     placeholder="Название фильма"
                     crossIconProps={{
                         onClick: () => {

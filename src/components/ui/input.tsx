@@ -1,8 +1,8 @@
 import { type FC, type InputHTMLAttributes, useRef } from 'react';
 
-import CrossIcon from '@/icons/CrossIcon.tsx';
-import type { IconProps } from '@/icons/IconProps.ts';
-import SearchIcon from '@/icons/SearchIcon.tsx';
+import CircledCrossIcon from '@/components/icons/CircledCrossIcon.tsx';
+import type { IconProps } from '@/components/icons/IconProps.ts';
+import SearchIcon from '@/components/icons/SearchIcon.tsx';
 import { cn } from '@/utils/cn.ts';
 
 export type Props = InputHTMLAttributes<HTMLInputElement> & {
@@ -23,7 +23,7 @@ const Input: FC<Props> = ({
     return (
         <div
             className={cn(
-                'has-[input:focus]:border-primary bg-white inline-flex rounded-lg p-3 items-center justify-center border border-white transition duration-150 ease-in-out hover:border-b-light gap-2',
+                'has-[>:disabled]:opacity-60 has-[>:disabled]:bg-neutral-200 has-[input:focus]:border-primary bg-white inline-flex rounded-lg p-3 items-center justify-center border border-b-light transition duration-150 ease-in-out hover:border-b-light gap-2',
                 containerClassName,
             )}
             onClick={() => {
@@ -38,9 +38,9 @@ const Input: FC<Props> = ({
             >
                 {children}
             </input>
-            <CrossIcon
+            <CircledCrossIcon
                 {...crossRest}
-                className={cn('w-6 h-6', crossClassName)}
+                className={cn('cursor-pointer w-6 h-6', crossClassName)}
             />
         </div>
     );

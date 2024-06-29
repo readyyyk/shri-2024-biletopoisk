@@ -2,7 +2,7 @@ import { type FC } from 'react';
 
 import Button, { type Props as ButtonProps } from '@/components/ui/button.tsx';
 
-import ArrowRightIcon from '@/icons/ArrowRightIcon.tsx';
+import ArrowRightIcon from '@/components/icons/ArrowRightIcon.tsx';
 import { cn } from '@/utils/cn.ts';
 
 export type Props = Omit<ButtonProps, 'variant' | 'children'>;

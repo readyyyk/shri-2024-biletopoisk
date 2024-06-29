@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import type { IconProps } from '@/icons/IconProps.ts';
+import type { IconProps } from '@/components/icons/IconProps.ts';
 
 const SelectIndicatorIcon: FC<IconProps> = (props) => (
     <svg

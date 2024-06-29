@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 
-import StarIcon from '@/icons/StarIcon.tsx';
+import StarIcon from '@/components/icons/StarIcon.tsx';
 import { cn } from '@/utils/cn.ts';
 
 type Props = {

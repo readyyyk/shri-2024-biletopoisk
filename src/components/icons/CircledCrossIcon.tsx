@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 
-import type { IconProps } from '@/icons/IconProps.ts';
+import type { IconProps } from '@/components/icons/IconProps.ts';
 
-const CrossIcon: FC<IconProps> = (props) => (
+const CircledCrossIcon: FC<IconProps> = (props) => (
     <svg
         width="16"
         height="16"
@@ -20,4 +20,4 @@ const CrossIcon: FC<IconProps> = (props) => (
     </svg>
 );
 
-export default CrossIcon;
+export default CircledCrossIcon;

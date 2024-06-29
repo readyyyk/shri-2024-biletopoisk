@@ -10,9 +10,9 @@ import {
     CarouselPrev,
 } from '@/components/ui/carousel';
 
-import { useGetFullMovieQuery } from '@/api/backend.ts';
 import ActorPreview from '@/components/ActorPreview.tsx';
 import FilmCard from '@/components/FilmCard.tsx';
+import { useGetFullMovieQuery } from '@/slices/backend.ts';
 
 const SingleMovie: FC = () => {
     const { movieId: _movieId } = useParams();

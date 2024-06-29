@@ -13,7 +13,7 @@ import {
     useSelectContext,
 } from '@/components/ui/select/select-context.tsx';
 
-import SelectIndicatorIcon from '@/icons/SelectIndicatorIcon.tsx';
+import SelectIndicatorIcon from '@/components/icons/SelectIndicatorIcon.tsx';
 import { cn } from '@/utils/cn.ts';
 
 const CurrentValue: FC<{ placeholder?: string }> = (props) => {

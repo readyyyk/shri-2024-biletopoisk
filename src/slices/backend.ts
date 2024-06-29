@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { SearchResultsSchema } from '@/schemas/api.ts';
 import { FullMovieInfoSchema, type GENRES_ENG } from '@/schemas/film.ts';
+import { SuccessLoginSchema } from '@/schemas/login.ts';
 
 export type GetPageOptions = {
     page?: number;
@@ -15,7 +16,7 @@ export type GetPageOptions = {
 export const backendApi = createApi({
     reducerPath: 'biletopoiskAPI',
     baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3030/api/v1/' }),
-    tagTypes: ['Movie'],
+    tagTypes: ['Movie', 'User'],
     endpoints: (builder) => ({
         getPage: builder.query<
             ReturnType<typeof SearchResultsSchema.safeParse>,
@@ -45,9 +46,26 @@ export const backendApi = createApi({
                 return FullMovieInfoSchema.safeParse(response);
             },
         }),
+
+        postLogin: builder.mutation<
+            | ReturnType<typeof SuccessLoginSchema.safeParse>
+            | { success: false; error: string },
+            { username: string; password: string }
+        >({
+            query: (body) => ({
+                body: body,
+                url: 'login',
+                method: 'POST',
+            }),
+            transformResponse: (response: unknown) => {
+                return SuccessLoginSchema.safeParse(response);
+            },
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetPageQuery, useGetFullMovieQuery } = backendApi;
+export const { useGetPageQuery, useGetFullMovieQuery, usePostLoginMutation } =
+    backendApi;
