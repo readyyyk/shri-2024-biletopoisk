@@ -2,7 +2,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { SearchResultsSchema } from '@/schemas/api.ts';
-import { GENRES, type GENRES_RU } from '@/schemas/film.ts';
+import { FullMovieInfoSchema, type GENRES_ENG } from '@/schemas/film.ts';
+
+export type GetPageOptions = {
+    page?: number;
+    genre?: GENRES_ENG;
+    year?: string;
+    title?: string;
+};
 
 // Define a service using a base URL and expected endpoints
 export const backendApi = createApi({
@@ -12,24 +19,30 @@ export const backendApi = createApi({
     endpoints: (builder) => ({
         getPage: builder.query<
             ReturnType<typeof SearchResultsSchema.safeParse>,
-            { page?: number; genre?: GENRES_RU; year?: string }
+            GetPageOptions
         >({
             query: (params) => {
-                // Convert genre to English and ignore ts error
-                params.genre &&
-                    (params.genre = GENRES[params.genre] as GENRES_RU);
-                const search = new URLSearchParams(
-                    JSON.parse(JSON.stringify(params)),
-                );
+                const search = new URLSearchParams();
+                params.page && search.append('page', params.page.toString());
+                params.title && search.append('title', params.title);
+                params.genre && search.append('genre', params.genre);
+                params.year && search.append('release_year', params.year);
                 return 'search?' + search.toString();
             },
             providesTags: ['Movie'],
             transformResponse: (response: unknown) => {
-                console.log(SearchResultsSchema.safeParse(response));
-                // for (let i = 0; i < 10; i++) {
-                //     Array(1e9).reduce((acc, _, i) => acc + i, 0);
-                // }
                 return SearchResultsSchema.safeParse(response);
+            },
+        }),
+
+        getFullMovie: builder.query<
+            ReturnType<typeof FullMovieInfoSchema.safeParse>,
+            { id: number }
+        >({
+            query: ({ id }) => 'movie/' + id,
+            providesTags: ['Movie'],
+            transformResponse: (response: unknown) => {
+                return FullMovieInfoSchema.safeParse(response);
             },
         }),
     }),
@@ -37,4 +50,4 @@ export const backendApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetPageQuery } = backendApi;
+export const { useGetPageQuery, useGetFullMovieQuery } = backendApi;

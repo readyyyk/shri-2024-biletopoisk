@@ -2,13 +2,11 @@ import { type FC } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import StarIcon from '@/icons/StarIcon.tsx';
+import StarRate from '@/components/StarRate.tsx';
 import type { ShortMovieInfo } from '@/schemas/film.ts';
-import { cn } from '@/utils/cn.ts';
 
 type Props = ShortMovieInfo;
 const FilmPreview: FC<Props> = (props) => {
-    const roundedRating = Math.round(parseFloat(props.rating));
     return (
         <Link
             to={'/movie/' + props.id}
@@ -41,73 +39,7 @@ const FilmPreview: FC<Props> = (props) => {
                 </div>
             </div>
 
-            <div className="flex gap-2">
-                <div className="flex flex-col gap-2 items-center">
-                    <StarIcon
-                        className={cn(
-                            'w-4 h-4 fill-transparent',
-                            roundedRating >= 1 && 'text-primary fill-current',
-                        )}
-                    />
-                    <span
-                        className={roundedRating >= 1 ? '' : 'text-[#ABABAB]'}
-                    >
-                        1
-                    </span>
-                </div>
-                <div className="flex flex-col gap-2 items-center">
-                    <StarIcon
-                        className={cn(
-                            'w-4 h-4 fill-transparent',
-                            roundedRating >= 2 && 'text-primary fill-current',
-                        )}
-                    />
-                    <span
-                        className={roundedRating >= 2 ? '' : 'text-[#ABABAB]'}
-                    >
-                        2
-                    </span>
-                </div>
-                <div className="flex flex-col gap-2 items-center">
-                    <StarIcon
-                        className={cn(
-                            'w-4 h-4 fill-transparent',
-                            roundedRating >= 3 && 'text-primary fill-current',
-                        )}
-                    />
-                    <span
-                        className={roundedRating >= 3 ? '' : 'text-[#ABABAB]'}
-                    >
-                        3
-                    </span>
-                </div>
-                <div className="flex flex-col gap-2 items-center">
-                    <StarIcon
-                        className={cn(
-                            'w-4 h-4 fill-transparent',
-                            roundedRating >= 4 && 'text-primary fill-current',
-                        )}
-                    />
-                    <span
-                        className={roundedRating >= 4 ? '' : 'text-[#ABABAB]'}
-                    >
-                        4
-                    </span>
-                </div>
-                <div className="flex flex-col gap-2 items-center">
-                    <StarIcon
-                        className={cn(
-                            'w-4 h-4 fill-transparent',
-                            roundedRating >= 5 && 'text-primary fill-current',
-                        )}
-                    />
-                    <span
-                        className={roundedRating >= 5 ? '' : 'text-[#ABABAB]'}
-                    >
-                        5
-                    </span>
-                </div>
-            </div>
+            <StarRate rating={parseFloat(props.rating)} passive />
         </Link>
     );
 };

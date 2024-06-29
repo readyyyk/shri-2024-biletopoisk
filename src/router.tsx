@@ -1,5 +1,7 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
 
+import SingleMovie from '@/views/SingleMovie.tsx';
+
 import App from './App.tsx';
 import SearchView from './views/Search.tsx';
 
@@ -26,6 +28,15 @@ export const router = createBrowserRouter([
                     return null;
                 },
                 element: <SearchView />,
+            },
+            {
+                index: true,
+                path: 'movie/:movieId',
+                loader: (args) => {
+                    console.log(args.request.url);
+                    return null;
+                },
+                element: <SingleMovie />,
             },
         ],
     },

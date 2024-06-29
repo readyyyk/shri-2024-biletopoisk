@@ -22,10 +22,10 @@ const Option: FC<Props> = ({
         (e: MouseEvent<HTMLButtonElement>) => {
             e.stopPropagation();
             onClick?.(e);
-            setValue(value);
+            setValue([value, children]);
             setIsOpen(false);
         },
-        [onClick, setValue, value, setIsOpen],
+        [onClick, setValue, value, children, setIsOpen],
     );
     return (
         <Button

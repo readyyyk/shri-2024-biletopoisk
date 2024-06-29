@@ -1,5 +1,3 @@
-'use client';
-
 import {
     type Dispatch,
     type FC,
@@ -11,9 +9,10 @@ import {
     useState,
 } from 'react';
 
+export type ValueType = [serverValue: string, userValue: ReactNode];
 type ContextType = {
-    value: string;
-    setValue: Dispatch<SetStateAction<string>>;
+    value: ValueType;
+    setValue: Dispatch<SetStateAction<ValueType>>;
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
@@ -24,12 +23,14 @@ export const useSelectContext = () => useContext(Context);
 
 type Props = {
     children: ReactNode;
-    defaultValue?: string;
+    defaultValue?: ValueType;
     onOpenChange?: (isOpen: boolean) => void;
     onValueChange?: (value: string) => void;
 };
 export const SelectContextProvider: FC<Props> = (props) => {
-    const [value, setValue] = useState(props.defaultValue ?? '');
+    const [value, setValue] = useState<ValueType>(
+        props.defaultValue ?? ['', ''],
+    );
     const [isOpen, setIsOpen] = useState(false);
 
     const contextValue = {
@@ -41,7 +42,7 @@ export const SelectContextProvider: FC<Props> = (props) => {
 
     const { onValueChange } = props;
     useEffect(() => {
-        onValueChange?.(value);
+        onValueChange?.(value[0]);
     }, [value, onValueChange]);
 
     const { onOpenChange } = props;

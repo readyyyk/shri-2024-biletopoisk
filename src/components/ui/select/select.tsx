@@ -9,6 +9,7 @@ import Button from '@/components/ui/button.tsx';
 import OptionsContainer from '@/components/ui/select/options-container.tsx';
 import {
     SelectContextProvider,
+    type ValueType,
     useSelectContext,
 } from '@/components/ui/select/select-context.tsx';
 
@@ -30,7 +31,7 @@ const CurrentValue: FC<{ placeholder?: string }> = (props) => {
             onClick={handler}
         >
             <span className="first-letter:uppercase">
-                {value || placeholder}
+                {value[1] || placeholder}
             </span>
             <SelectIndicatorIcon
                 className={cn(
@@ -42,14 +43,14 @@ const CurrentValue: FC<{ placeholder?: string }> = (props) => {
     );
 };
 
-type Props<T extends string> = HTMLAttributes<HTMLDivElement> & {
+type Props = HTMLAttributes<HTMLDivElement> & {
     onOpenChange?: (isOpen: boolean) => void;
-    onValueChange?: (value: T) => void;
-    defaultValue?: string;
+    onValueChange?: (value: string) => void;
+    defaultValue?: ValueType;
     placeholder?: string;
     children: ReactNode;
 };
-const Select: FC<Props<string>> = ({
+const Select: FC<Props> = ({
     children,
     onValueChange,
     onOpenChange,

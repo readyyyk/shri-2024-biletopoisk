@@ -1,16 +1,21 @@
 import { type FC } from 'react';
 
-import Button, { type Props } from '@/components/ui/button.tsx';
+import Button, { type Props as ButtonProps } from '@/components/ui/button.tsx';
 
 import ArrowRightIcon from '@/icons/ArrowRightIcon.tsx';
+import { cn } from '@/utils/cn.ts';
 
-const ArrowRightButton: FC<Omit<Props, 'variant' | 'children'>> = (props) => {
+export type Props = Omit<ButtonProps, 'variant' | 'children'>;
+const ArrowRightButton: FC<Props> = ({ className, ...props }) => {
     return (
         <Button
             {...props}
-            className="rounded-full aspect-square hover:shadow-[0px_0px_4px_0px_#0000004D] hover:bg-[#E9EAED] hover:border-[#E9EAED] group"
+            className={cn(
+                'rounded-full aspect-square hover:shadow-[0px_0px_4px_0px_#0000004D] hover:bg-[#E9EAED] disabled:bg-[#E9EAED] hover:border-[#E9EAED] disabled:border-[#E9EAED] group disabled:cursor-not-allowed disabled:shadow-none',
+                className,
+            )}
         >
-            <ArrowRightIcon className="transition group-hover:text-[#ABABAB]" />
+            <ArrowRightIcon className="transition group-hover:text-[#ABABAB] group-disabled:text-[#ABABAB]" />
         </Button>
     );
 };
