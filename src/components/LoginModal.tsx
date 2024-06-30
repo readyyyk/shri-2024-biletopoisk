@@ -79,6 +79,9 @@ const LoginModal: FC = () => {
                     </span>
                     <Input
                         required
+                        name="login"
+                        autoComplete="username"
+                        id="biletopoisk-login"
                         disabled={isLoading}
                         placeholder="Введите логин"
                         value={username}
@@ -100,6 +103,10 @@ const LoginModal: FC = () => {
 
                     <Input
                         required
+                        name="password"
+                        type="password"
+                        autoComplete="current-password"
+                        id="biletopoisk-password"
                         disabled={isLoading}
                         placeholder="Введите пароль"
                         value={password}

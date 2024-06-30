@@ -1,6 +1,7 @@
 import { type FC, type MouseEvent } from 'react';
 
 import StarIcon from '@/components/icons/StarIcon.tsx';
+import { usePostRateMovieMutation } from '@/slices/backend.ts';
 import { setSingle } from '@/slices/user-rates.ts';
 import { useAppDispatch, useAppSelector } from '@/store.ts';
 import { cn } from '@/utils/cn.ts';
@@ -60,6 +61,21 @@ const CleverStarRate: FC<{ movieId: string }> = (props) => {
     );
     const dispatch = useAppDispatch();
 
+    const [mutate] = usePostRateMovieMutation();
+
+    const handler = async (e: MouseEvent<HTMLDivElement>, rating: number) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const data = await mutate({
+            movieId: props.movieId,
+            user_rate: rating,
+        });
+
+        if (data.data?.success) {
+            dispatch(setSingle({ id: props.movieId, value: rating }));
+        }
+    };
+
     if (!isLogged) {
         return null;
     }
@@ -69,15 +85,11 @@ const CleverStarRate: FC<{ movieId: string }> = (props) => {
                 forceRate
                 passive={false}
                 rating={userRating}
-                onClick={(e, rating) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dispatch(setSingle({ id: props.movieId, value: rating }));
-                }}
+                onClick={handler}
             />
         </div>
     );
 };
 
 export { CleverStarRate };
-export default StarRate;
+// export default StarRate;
