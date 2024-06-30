@@ -43,7 +43,7 @@ const Select: FC<Props> = (props) => {
                 setIsOpen(false);
             }}
         >
-            {value[1]}
+            <span className="first-letter:uppercase">{value[1]}</span>
         </Button>
     ));
 
