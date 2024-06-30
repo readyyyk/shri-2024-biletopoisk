@@ -44,20 +44,20 @@ const SearchView: FC = () => {
     }, [page, setSearchParams]);
     useEffect(() => {
         setSearchParams((prev) => {
-            // for (const key in debouncedParams) {
-            //     console.log(debouncedParams[key], searchParams.get(key));
-            //     if (debouncedParams[key] !== searchParams.get(key)) {
-            //         setTimeout(() => setPage(1), 0);
-            //     }
-            //     if (debouncedParams[key]) {
-            //         prev.set(key, debouncedParams[key]);
-            //     } else {
-            //         prev.delete(key);
-            //     }
-            // }
-            return { ...prev, ...debouncedParams, page };
+            for (const key of ['title', 'year', 'genre'] as const) {
+                const currentInSearch = searchParams.get(key) ?? '';
+                if (debouncedParams[key] !== currentInSearch) {
+                    setTimeout(() => setPage(1), 0);
+                }
+                if (debouncedParams[key]) {
+                    prev.set(key, debouncedParams[key]);
+                } else {
+                    prev.delete(key);
+                }
+            }
+            return prev;
         });
-    }, [debouncedParams, setSearchParams]);
+    }, [debouncedParams, searchParams, setSearchParams]);
 
     const {
         data: films,
