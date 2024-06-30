@@ -7,21 +7,26 @@ import dynamic from 'next/dynamic';
 import Button from '@/components/ui/button.tsx';
 import Input from '@/components/ui/input.tsx';
 
+import { login } from '@/api/auth.ts';
+import { useUserContext } from '@/app/userContext.tsx';
+import { useLoginContext } from '@/components/LoginModal/login-modal-context.tsx';
 import CrossIcon from '@/components/icons/CrossIcon.tsx';
 import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
+import { setAuthCookie } from '@/utils/cookie.ts';
 
 const Modal = dynamic(() => import('@/components/ui/modal.tsx'), {
     ssr: false,
 });
 
 const LoginModal: FC = () => {
-    const open = false;
+    const { isOpen, setIsOpen } = useLoginContext();
+    const { setUser } = useUserContext();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
 
-    const isLoading = false;
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setErrorMsg('');
@@ -30,10 +35,27 @@ const LoginModal: FC = () => {
     const submitHandler = (e: FormEvent) => {
         e.preventDefault();
         console.log({ username: username, password });
+        void handleLogin();
+    };
+
+    const handleLogin = async () => {
+        setIsLoading(true);
+        const resp = await login({ username, password });
+        setIsLoading(false);
+
+        if (!resp.success) {
+            setErrorMsg(resp.error.toString());
+            return;
+        }
+        setIsOpen(false);
+        setUser({ logged: true, token: resp.data.token });
+        setUsername('');
+        setPassword('');
+        setAuthCookie(resp.data.token);
     };
 
     return (
-        <Modal isOpen={open} onClose={() => console.log('close modal')}>
+        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
             <form
                 className="flex flex-col w-96 bg-white p-6 rounded-xl gap-3"
                 onSubmit={submitHandler}
@@ -42,7 +64,7 @@ const LoginModal: FC = () => {
                     <h2 className="font-semibold text-xl">Авторизация</h2>
                     <CrossIcon
                         className="w-5 h-5 cursor-pointer"
-                        onClick={() => console.log('close modal')}
+                        onClick={() => setIsOpen(false)}
                     />
                 </div>
 
@@ -112,7 +134,7 @@ const LoginModal: FC = () => {
                         variant="outlined"
                         type="reset"
                         onClick={() => {
-                            console.log('close modal');
+                            setIsOpen(false);
                             setPassword('');
                             setUsername('');
                         }}

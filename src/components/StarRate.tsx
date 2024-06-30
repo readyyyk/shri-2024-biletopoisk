@@ -1,7 +1,9 @@
 'use client';
 
-import { type FC, type MouseEvent } from 'react';
+import { type FC, type MouseEvent, useState } from 'react';
 
+import { rateMovie } from '@/api/posts.ts';
+import { useUserContext } from '@/app/userContext.tsx';
 import StarIcon from '@/components/icons/StarIcon.tsx';
 import { cn } from '@/utils/cn.ts';
 
@@ -54,31 +56,38 @@ const StarRate: FC<Props> = (props) => {
 
 // clever star rate
 const CleverStarRate: FC<{ movieId: string }> = (props) => {
-    const isLogged = false;
-    const userRating = 3;
+    const { user } = useUserContext();
+    const isLogged = user.logged;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, setState] = useState(0);
 
-    const rateMovie = async (a: unknown) => {
-        console.log('rateMovie', a);
-        return { success: true };
+    if (!isLogged) {
+        return null;
+    }
+
+    const userRating = parseInt(
+        localStorage.getItem('film' + props.movieId) ?? '0',
+    );
+
+    const saveLocalRate = (props: { id: string; value: number }) => {
+        localStorage.setItem('film' + props.id, props.value.toString());
+        setState((prev) => prev + 1);
     };
-    const saveLocalRate = (a: unknown) => console.log('saveLocalRate', a);
 
     const handler = async (e: MouseEvent<HTMLDivElement>, rating: number) => {
         e.preventDefault();
         e.stopPropagation();
-        const data = await rateMovie({
+        console.log({
             movieId: props.movieId,
             user_rate: rating,
         });
+        const data = await rateMovie(props.movieId, rating);
 
         if (data.success) {
             saveLocalRate({ id: props.movieId, value: rating });
         }
     };
 
-    if (!isLogged) {
-        return null;
-    }
     return (
         <div>
             <StarRate

@@ -4,8 +4,10 @@ import '@fontsource/roboto';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 
+import { UserContextProvider } from '@/app/userContext.tsx';
 import Header from '@/components/Header';
-import LoginModal from '@/components/LoginModal.tsx';
+import LoginModal from '@/components/LoginModal/LoginModal.tsx';
+import { LoginContextProvider } from '@/components/LoginModal/login-modal-context.tsx';
 import '@/index.css';
 
 const roboto = Roboto({
@@ -27,9 +29,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     id="root"
                     className="min-h-screen bg-[#ededed] flex flex-col"
                 >
-                    <Header />
-                    <div className="px-8 py-5 flex flex-1">{children}</div>
-                    <LoginModal />
+                    <LoginContextProvider>
+                        <UserContextProvider>
+                            <Header />
+                            <div className="px-8 py-5 flex flex-1">
+                                {children}
+                            </div>
+                            <LoginModal />
+                        </UserContextProvider>
+                    </LoginContextProvider>
                 </div>
             </body>
         </html>
