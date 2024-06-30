@@ -1,9 +1,18 @@
 // Need to use the React-specific entry point to import createApi
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {
+    type BaseQueryFn,
+    type FetchArgs,
+    type FetchBaseQueryError,
+    createApi,
+    fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react';
 
+import { BASE_URL } from '@/config.ts';
 import { RateResultSchema, SearchResultsSchema } from '@/schemas/api.ts';
 import { FullMovieInfoSchema } from '@/schemas/film.ts';
 import { SuccessLoginSchema } from '@/schemas/login.ts';
+import { setOpen } from '@/slices/login-modal.ts';
+import { setToken } from '@/slices/user.ts';
 import { type RootState } from '@/store.ts';
 
 export type GetPageOptions = {
@@ -13,19 +22,40 @@ export type GetPageOptions = {
     title?: string;
 };
 
-// Define a service using a base URL and expected endpoints
-export const backendApi = createApi({
-    reducerPath: 'biletopoiskAPI',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:3030/api/v1/',
-        prepareHeaders: (headers, { getState }) => {
-            const user = (getState() as RootState).userSlice;
+const baseQueryWithAuth: BaseQueryFn<
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+    const user = (api.getState() as RootState).userSlice;
+
+    const baseQuery = fetchBaseQuery({
+        baseUrl: BASE_URL,
+        prepareHeaders: (headers) => {
             if (user.logged) {
-                headers.set('authorization', 'Bearer ' + user.token);
+                headers.set('Authorization', `Bearer ${user.token}`);
             }
             return headers;
         },
-    }),
+    });
+
+    const result = await baseQuery(args, api, extraOptions);
+
+    if (result.error && result.error.status === 401) {
+        api.dispatch(setToken(''));
+        api.dispatch(setOpen(true));
+
+        return result;
+    }
+
+    return result;
+};
+
+// Define a service using a base URL and expected endpoints
+export const backendApi = createApi({
+    reducerPath: 'biletopoiskAPI',
+    baseQuery: baseQueryWithAuth,
+
     tagTypes: ['Movie', 'User'],
     endpoints: (builder) => ({
         getPage: builder.query<
