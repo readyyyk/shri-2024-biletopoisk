@@ -2,7 +2,7 @@ import { type FC } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import StarRate from '@/components/StarRate.tsx';
+import { CleverStarRate } from '@/components/StarRate.tsx';
 import type { ShortMovieInfo } from '@/schemas/film.ts';
 
 type Props = ShortMovieInfo;
@@ -39,7 +39,7 @@ const FilmPreview: FC<Props> = (props) => {
                 </div>
             </div>
 
-            <StarRate rating={parseFloat(props.rating)} passive />
+            <CleverStarRate movieId={props.id} />
         </Link>
     );
 };

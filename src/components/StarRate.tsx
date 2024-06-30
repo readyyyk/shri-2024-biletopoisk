@@ -1,16 +1,19 @@
-import { type FC } from 'react';
+import { type FC, type MouseEvent } from 'react';
 
 import StarIcon from '@/components/icons/StarIcon.tsx';
+import { setSingle } from '@/slices/user-rates.ts';
+import { useAppDispatch, useAppSelector } from '@/store.ts';
 import { cn } from '@/utils/cn.ts';
 
 type Props = {
     rating: number;
     passive?: boolean;
-    onClick?: (rating: number) => void;
+    forceRate?: boolean;
+    onClick?: (event: MouseEvent<HTMLDivElement>, rating: number) => void;
 };
 
 const StarRate: FC<Props> = (props) => {
-    const roundedRating = Math.floor(props.rating);
+    const roundedRating = Math.floor(props.rating ?? 0);
 
     return (
         <div className="flex flex-row-reverse group">
@@ -21,15 +24,18 @@ const StarRate: FC<Props> = (props) => {
                         'flex flex-col px-1 items-center ' +
                         (!props.passive && 'star-rating')
                     }
-                    onClick={() => !props.passive && props.onClick?.(rating)}
+                    onClick={(e) =>
+                        !props.passive && props.onClick?.(e, rating)
+                    }
                 >
                     <StarIcon
                         className={cn(
                             'w-4 h-4 fill-transparent',
                             roundedRating >= rating &&
                                 'text-primary fill-current',
-                            !props.passive &&
-                                'group-hover:fill-none group-hover:text-[#ABABAB]',
+                            props.forceRate &&
+                                roundedRating >= rating &&
+                                '!text-primary !fill-primary',
                         )}
                     />
                     <span
@@ -46,4 +52,32 @@ const StarRate: FC<Props> = (props) => {
     );
 };
 
+// clever star rate
+const CleverStarRate: FC<{ movieId: string }> = (props) => {
+    const isLogged = useAppSelector((state) => state.userSlice.logged);
+    const userRating = useAppSelector(
+        (state) => state.ratesSlice[props.movieId],
+    );
+    const dispatch = useAppDispatch();
+
+    if (!isLogged) {
+        return null;
+    }
+    return (
+        <div>
+            <StarRate
+                forceRate
+                passive={false}
+                rating={userRating}
+                onClick={(e, rating) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dispatch(setSingle({ id: props.movieId, value: rating }));
+                }}
+            />
+        </div>
+    );
+};
+
+export { CleverStarRate };
 export default StarRate;

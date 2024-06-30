@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { backendApi } from '@/slices/backend.ts';
 import loginModalReducer from '@/slices/login-modal.ts';
+import userRatesReducer from '@/slices/user-rates.ts';
 import userReducer from '@/slices/user.ts';
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         [backendApi.reducerPath]: backendApi.reducer,
         loginModalSlice: loginModalReducer,
         userSlice: userReducer,
+        ratesSlice: userRatesReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(backendApi.middleware),

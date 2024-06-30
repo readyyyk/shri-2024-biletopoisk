@@ -66,7 +66,7 @@ const SearchView: FC = () => {
     } else if (!films || !films.success || !films.data) {
         mainContent = (
             <div className="flex flex-col gap-2">
-                <span> Error </span>
+                <span> Упс... Ошибка! </span>
                 <pre> {JSON.stringify(films?.error, null, 4)}</pre>
             </div>
         );

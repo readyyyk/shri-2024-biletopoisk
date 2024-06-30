@@ -1,4 +1,10 @@
-import { type FC, type HTMLAttributes, useEffect, useRef } from 'react';
+import {
+    type FC,
+    type HTMLAttributes,
+    type ReactNode,
+    useEffect,
+    useRef,
+} from 'react';
 
 import {
     CarouselContextProvider,
@@ -29,11 +35,13 @@ const CarouselContainer: FC<HTMLAttributes<HTMLDivElement>> = ({
     );
 };
 
-type Props = HTMLAttributes<HTMLDivElement>;
-const Carousel: FC<Props> = (props) => {
+// Temporally
+type Props = HTMLAttributes<HTMLDivElement> & { navigation?: ReactNode };
+const Carousel: FC<Props> = ({ navigation, ...props }) => {
     return (
         <CarouselContextProvider>
-            <div className="max-w-full relative">
+            <div className="relative max-w-full">
+                {navigation}
                 <CarouselContainer {...props} />
             </div>
         </CarouselContextProvider>

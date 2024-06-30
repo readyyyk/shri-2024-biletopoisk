@@ -14,8 +14,11 @@
 }
 
 @layer components {
+    *:hover > .star-rating {
+        @apply group-hover:fill-none group-hover:text-[#ABABAB]
+    }
     .star-rating:hover svg,
     .star-rating:hover ~ .star-rating svg {
-        @apply !fill-[#ABABAB] !text-[#ABABAB]
+        @apply fill-[#ABABAB] text-[#ABABAB]
     }
 }
