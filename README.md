@@ -1,5 +1,9 @@
 # Biletopoisk
 
+> base route is `/shri-2024-biletopoisk` for deploying to gh-pages
+
+> __*!!*__ You can check project without cloning: start backend, and then just visit [gh-pages](https://readyyyk.github.io/shri-2024-biletopoisk/)
+
 ## Structure
 
 ```

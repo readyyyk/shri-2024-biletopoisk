@@ -7,7 +7,7 @@ import {
     fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react';
 
-import { BASE_URL } from '@/config.ts';
+import { BASE_API_URL } from '@/config.ts';
 import { RateResultSchema, SearchResultsSchema } from '@/schemas/api.ts';
 import { FullMovieInfoSchema } from '@/schemas/film.ts';
 import { SuccessLoginSchema } from '@/schemas/login.ts';
@@ -30,7 +30,7 @@ const baseQueryWithAuth: BaseQueryFn<
     const user = (api.getState() as RootState).userSlice;
 
     const baseQuery = fetchBaseQuery({
-        baseUrl: BASE_URL,
+        baseUrl: BASE_API_URL,
         prepareHeaders: (headers) => {
             if (user.logged) {
                 headers.set('Authorization', `Bearer ${user.token}`);
