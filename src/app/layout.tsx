@@ -4,7 +4,6 @@ import '@fontsource/roboto';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 
-import ReduxProvider from '@/app/ReduxProvider.tsx';
 import Header from '@/components/Header';
 import LoginModal from '@/components/LoginModal.tsx';
 import '@/index.css';
@@ -28,11 +27,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     id="root"
                     className="min-h-screen bg-[#ededed] flex flex-col"
                 >
-                    <ReduxProvider>
-                        <Header />
-                        <div className="px-8 py-5 flex flex-1">{children}</div>
-                        <LoginModal />
-                    </ReduxProvider>
+                    <Header />
+                    <div className="px-8 py-5 flex flex-1">{children}</div>
+                    <LoginModal />
                 </div>
             </body>
         </html>

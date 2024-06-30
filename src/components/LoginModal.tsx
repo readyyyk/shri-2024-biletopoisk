@@ -2,56 +2,38 @@
 
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
+import dynamic from 'next/dynamic';
+
 import Button from '@/components/ui/button.tsx';
 import Input from '@/components/ui/input.tsx';
-import Modal from '@/components/ui/modal.tsx';
 
 import CrossIcon from '@/components/icons/CrossIcon.tsx';
 import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
-import { usePostLoginMutation } from '@/slices/backend.ts';
-import { setOpen } from '@/slices/login-modal.ts';
-import { setToken } from '@/slices/user.ts';
-import { useAppDispatch, useAppSelector } from '@/store.ts';
+
+const Modal = dynamic(() => import('@/components/ui/modal.tsx'), {
+    ssr: false,
+});
 
 const LoginModal: FC = () => {
-    const open = useAppSelector((state) => state.loginModalSlice);
-    const dispatch = useAppDispatch();
+    const open = false;
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
 
-    const [mutate, { data, status, error, isLoading }] = usePostLoginMutation();
+    const isLoading = false;
 
     useEffect(() => {
         setErrorMsg('');
     }, [username, password]);
 
-    useEffect(() => {
-        if (data) {
-            if (data.success) {
-                setErrorMsg('');
-                dispatch(setToken(data.data.token));
-                dispatch(setOpen(false));
-            } else {
-                setErrorMsg(String(data.error));
-            }
-            return;
-        }
-        const realError = error as { data?: { error: string } };
-        if (realError?.data?.error) {
-            setErrorMsg(realError.data.error);
-            return;
-        }
-    }, [data, status, error, dispatch]);
-
     const submitHandler = (e: FormEvent) => {
         e.preventDefault();
-        mutate({ username: username, password });
+        console.log({ username: username, password });
     };
 
     return (
-        <Modal isOpen={open} onClose={() => dispatch(setOpen(false))}>
+        <Modal isOpen={open} onClose={() => console.log('close modal')}>
             <form
                 className="flex flex-col w-96 bg-white p-6 rounded-xl gap-3"
                 onSubmit={submitHandler}
@@ -60,7 +42,7 @@ const LoginModal: FC = () => {
                     <h2 className="font-semibold text-xl">Авторизация</h2>
                     <CrossIcon
                         className="w-5 h-5 cursor-pointer"
-                        onClick={() => dispatch(setOpen(false))}
+                        onClick={() => console.log('close modal')}
                     />
                 </div>
 
@@ -130,7 +112,7 @@ const LoginModal: FC = () => {
                         variant="outlined"
                         type="reset"
                         onClick={() => {
-                            dispatch(setOpen(false));
+                            console.log('close modal');
                             setPassword('');
                             setUsername('');
                         }}

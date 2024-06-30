@@ -5,18 +5,10 @@ import { type FC } from 'react';
 import Button from '@/components/ui/button.tsx';
 
 import UserIcon from '@/components/icons/UserIcon.tsx';
-import { setOpen } from '@/slices/login-modal.ts';
-import { setToken } from '@/slices/user.ts';
-import { useAppDispatch, useAppSelector } from '@/store.ts';
 
 const UserPart: FC = () => {
-    const user = useAppSelector((state) => state.userSlice.logged);
-    const dispatch = useAppDispatch();
-
-    const handleLogout = () => {
-        dispatch(setToken(''));
-        dispatch(setOpen(true));
-    };
+    const user = false;
+    const handleLogout = () => console.log('handleLogout');
 
     return (
         <div className="flex gap-4 items-center">
@@ -24,7 +16,7 @@ const UserPart: FC = () => {
                 <Button
                     variant="filled"
                     onClick={() => {
-                        dispatch(setOpen(true));
+                        console.log('open modal');
                     }}
                 >
                     Войти

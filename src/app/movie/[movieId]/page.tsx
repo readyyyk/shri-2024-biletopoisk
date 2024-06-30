@@ -1,9 +1,6 @@
-'use client';
-
 import { type FC } from 'react';
 
-import { skipToken } from '@reduxjs/toolkit/query';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import {
     Carousel,
@@ -12,30 +9,25 @@ import {
     CarouselPrev,
 } from '@/components/ui/carousel';
 
+import { getSingleMovie, getTop50PostIds } from '@/api/posts.ts';
 import ActorPreview from '@/components/ActorPreview.tsx';
 import FilmCard from '@/components/FilmCard.tsx';
-import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
-import { useGetFullMovieQuery } from '@/slices/backend.ts';
+
+export async function generateStaticParams() {
+    const a = await getTop50PostIds();
+    return a.map((id) => ({ movieId: id.toString() }));
+}
 
 type Props = {
     params: { movieId: string };
 };
-const Page: FC<Props> = (props) => {
+const Page: FC<Props> = async (props) => {
     const { movieId: _movieId } = props.params;
 
     const movieId = parseInt(_movieId ?? '');
 
-    const { data } = useGetFullMovieQuery(
-        movieId ? { id: movieId } : skipToken,
-    );
+    const data = await getSingleMovie({ id: movieId });
 
-    if (!data) {
-        return (
-            <div className="flex flex-1 justify-center items-center">
-                <LoaderIcon className="animate-spin" />
-            </div>
-        );
-    }
     if (!data.success) {
         return (
             <div className="flex flex-col gap-2">
@@ -46,7 +38,7 @@ const Page: FC<Props> = (props) => {
     }
 
     if (!movieId) {
-        redirect('error/404');
+        notFound();
     }
 
     return (

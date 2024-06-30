@@ -3,9 +3,6 @@
 import { type FC, type MouseEvent } from 'react';
 
 import StarIcon from '@/components/icons/StarIcon.tsx';
-import { usePostRateMovieMutation } from '@/slices/backend.ts';
-import { setSingle } from '@/slices/user-rates.ts';
-import { useAppDispatch, useAppSelector } from '@/store.ts';
 import { cn } from '@/utils/cn.ts';
 
 type Props = {
@@ -57,24 +54,25 @@ const StarRate: FC<Props> = (props) => {
 
 // clever star rate
 const CleverStarRate: FC<{ movieId: string }> = (props) => {
-    const isLogged = useAppSelector((state) => state.userSlice.logged);
-    const userRating = useAppSelector(
-        (state) => state.ratesSlice[props.movieId],
-    );
-    const dispatch = useAppDispatch();
+    const isLogged = false;
+    const userRating = 3;
 
-    const [mutate] = usePostRateMovieMutation();
+    const rateMovie = async (a: unknown) => {
+        console.log('rateMovie', a);
+        return { success: true };
+    };
+    const saveLocalRate = (a: unknown) => console.log('saveLocalRate', a);
 
     const handler = async (e: MouseEvent<HTMLDivElement>, rating: number) => {
         e.preventDefault();
         e.stopPropagation();
-        const data = await mutate({
+        const data = await rateMovie({
             movieId: props.movieId,
             user_rate: rating,
         });
 
-        if (data.data?.success) {
-            dispatch(setSingle({ id: props.movieId, value: rating }));
+        if (data.success) {
+            saveLocalRate({ id: props.movieId, value: rating });
         }
     };
 
