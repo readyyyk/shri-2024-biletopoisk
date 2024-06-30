@@ -1,14 +1,14 @@
 import { type FC, type ReactNode, useCallback, useEffect } from 'react';
 
-import { useSelectContext } from '@/components/ui/select/select-context.tsx';
-
 import { cn } from '@/utils/cn.ts';
 
-type Props = { children?: ReactNode };
+type Props = {
+    children?: ReactNode;
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+};
 
-const OptionsContainer: FC<Props> = (props) => {
-    const { isOpen, setIsOpen } = useSelectContext();
-
+const OptionsContainer: FC<Props> = ({ isOpen, setIsOpen, children }) => {
     const handler = useCallback(() => {
         setIsOpen(false);
     }, [setIsOpen]);
@@ -31,7 +31,7 @@ const OptionsContainer: FC<Props> = (props) => {
                     : 'opacity-0 scale-y-0 scale-x-75',
             )}
         >
-            {props.children}
+            {children}
         </div>
     );
 };

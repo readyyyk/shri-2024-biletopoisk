@@ -2,161 +2,124 @@ import { type FC, type ReactNode, useEffect, useState } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
-import ArrowRightButton from '@/components/ui/ArrowRightButton.tsx';
 import Input from '@/components/ui/input.tsx';
-import { Option, Select } from '@/components/ui/select';
 
 import FilmPreview from '@/components/FIlmPreview.tsx';
+import FiltersSection from '@/components/SearchFiltersSection.tsx';
+import SearchPagination from '@/components/SearchPagination.tsx';
 import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
-import {
-    type GENRES_ENG,
-    GENRES_ENtoRU,
-    GENRES_RUtoEN,
-    YEARS,
-} from '@/schemas/film.ts';
+import useDebounce from '@/hooks/use-debounce.ts';
+import { GENRES_ENtoRU } from '@/schemas/film.ts';
 import { useGetPageQuery } from '@/slices/backend.ts';
+
+const NotFound = () => (
+    <div className="text-center max-w-96">
+        <p className="text-lg text-[#1B1F23]"> Фильмы не найдены</p>
+        <p className="text-[#999FA6]">Измените запрос и попробуйте снова</p>
+    </div>
+);
+
+const SearchError = ({ error }: { error: string }) => (
+    <div className="flex flex-col gap-2">
+        <span> Упс... Ошибка! </span>
+        <pre> {error} </pre>
+    </div>
+);
 
 const SearchView: FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const params = Object.fromEntries(searchParams.entries());
-    const [page, setPage] = useState(parseInt(params.page ?? ''));
-    const [title, setTitle] = useState(params.title ?? '');
-    const [genre, setGenre] = useState<GENRES_ENG | ''>(
-        (params.genre as GENRES_ENG) ?? '',
-    );
-    const [year, setYear] = useState(searchParams.get('year') ?? '');
+    const [params, setParams] = useState({
+        title: searchParams.get('title') || '',
+        genre: searchParams.get('genre') || '',
+        year: searchParams.get('year') || '',
+    });
+    const [page, setPage] = useState(parseInt(searchParams.get('page') ?? '1'));
+    const [debouncedParams] = useDebounce(params, 500);
 
     useEffect(() => {
-        const oldSearchParams = Object.fromEntries(searchParams.entries());
-        const newSearchParams = { title, genre, year } as Record<
-            string,
-            string
-        >;
-
-        const search = new URLSearchParams(oldSearchParams);
-
-        for (const key of Object.keys(newSearchParams)) {
-            search.set(key, newSearchParams[key]);
-            if (!newSearchParams[key]) {
-                search.delete(key);
-            }
-            if (!!newSearchParams[key] !== !!oldSearchParams[key]) {
-                setPage(1);
-            }
-        }
-        setSearchParams(search);
-    }, [searchParams, setSearchParams, title, genre, year]);
-
-    useEffect(() => {
-        if (!page) {
-            return;
-        }
-
         setSearchParams((prev) => {
             prev.set('page', page.toString());
             return prev;
         });
-    }, [setSearchParams, page]);
+    }, [page, setSearchParams]);
+    useEffect(() => {
+        setSearchParams((prev) => {
+            // for (const key in debouncedParams) {
+            //     console.log(debouncedParams[key], searchParams.get(key));
+            //     if (debouncedParams[key] !== searchParams.get(key)) {
+            //         setTimeout(() => setPage(1), 0);
+            //     }
+            //     if (debouncedParams[key]) {
+            //         prev.set(key, debouncedParams[key]);
+            //     } else {
+            //         prev.delete(key);
+            //     }
+            // }
+            return { ...prev, ...debouncedParams, page };
+        });
+    }, [debouncedParams, setSearchParams]);
 
-    const { data: films, isLoading, isFetching } = useGetPageQuery(params);
+    const {
+        data: films,
+        isLoading,
+        isFetching,
+    } = useGetPageQuery({ ...debouncedParams, page });
+
+    // helpers
+    const nextPage = () => setPage((p) => p + 1);
+    const prevPage = () => setPage((p) => p - 1);
+
+    const title = params.title ?? '';
+
+    const setTitle = (title: string) => setParams((p) => ({ ...p, title }));
+    const setYear = (year: string) => setParams((p) => ({ ...p, year }));
+    const setGenre = (genre: string) => setParams((p) => ({ ...p, genre }));
+
+    // const setYear = (year: string) => {};
+    // const setGenre = (genre: string) => console.log;
+
+    const genreDefaultValue: [string, string] = [
+        params.genre,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        GENRES_ENtoRU[params.genre],
+    ];
 
     let mainContent: ReactNode;
     if (isLoading || isFetching) {
         mainContent = <LoaderIcon className="animate-spin" />;
     } else if (!films || !films.success || !films.data) {
-        mainContent = (
-            <div className="flex flex-col gap-2">
-                <span> Упс... Ошибка! </span>
-                <pre> {JSON.stringify(films?.error, null, 4)}</pre>
-            </div>
-        );
+        const err = JSON.stringify(films?.error, null, 4);
+        mainContent = <SearchError error={err} />;
     } else if (!films.data.search_result.length) {
-        mainContent = (
-            <div className="text-center max-w-96">
-                <p className="text-lg text-[#1B1F23]"> Фильмы не найдены</p>
-                <p className="text-[#999FA6]">
-                    Измените запрос и попробуйте снова
-                </p>
-            </div>
-        );
+        mainContent = <NotFound />;
     } else {
+        const previews = films.data.search_result.map((film) => (
+            <FilmPreview {...film} key={'film' + film.id} />
+        ));
         mainContent = (
             <>
-                {films.data.search_result.map((film) => (
-                    <FilmPreview {...film} key={'film' + film.id} />
-                ))}
-                <div className="flex gap-4 flex-1 justify-self-start self-start items-center">
-                    <ArrowRightButton
-                        className="rotate-180 scale-75"
-                        onClick={() => setPage((a) => a - 1)}
-                        disabled={!params.page || params.page === '1'}
-                    />
-                    <span className="font-semibold">{params.page ?? 1}</span>
-                    <ArrowRightButton
-                        className="scale-75"
-                        disabled={films.data.total_pages === page}
-                        onClick={() => setPage((a) => a + 1)}
-                    />
-                </div>
+                {previews}
+                <SearchPagination
+                    page={page}
+                    nextPage={nextPage}
+                    prevPage={prevPage}
+                    isFirst={page === 1}
+                    isLast={films.data.total_pages === page}
+                />
             </>
         );
     }
 
-    const genreOptions = [
-        <Option key={'option-genre-all'} value="">
-            Не выран
-        </Option>,
-        ...Object.entries(GENRES_RUtoEN).map(([ru, en]) => (
-            <Option key={'option-genre-' + en} value={en}>
-                <span className="first-letter:capitalize">{ru}</span>
-            </Option>
-        )),
-    ];
-
-    const yearOptions = [
-        <Option key={'option-genre-all'} value="">
-            Не выран
-        </Option>,
-        ...Object.entries(YEARS).map(([server, user]) => (
-            <Option key={'option-year-' + server} value={server}>
-                {user}
-            </Option>
-        )),
-    ];
-
     return (
         <div className="flex flex-col md:flex-row justify-start items-start gap-5 flex-1">
-            <div className="flex flex-col bg-white w-[400px] rounded-lg p-6 gap-5">
-                <b>Фильтры</b>
-                <div className="flex flex-col gap-1">
-                    <span>Жанр</span>
-                    <Select
-                        placeholder="Выберите жанр"
-                        defaultValue={
-                            genre ? [genre, GENRES_ENtoRU[genre]] : undefined
-                        }
-                        onValueChange={(value) => setGenre(value as GENRES_ENG)}
-                    >
-                        {genreOptions}
-                    </Select>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <span>Год выпуска</span>
-                    <Select
-                        placeholder="Выберите год"
-                        defaultValue={
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            year ? [year, YEARS[year]] : undefined
-                        }
-                        onValueChange={(value) => setYear(value)}
-                    >
-                        {yearOptions}
-                    </Select>
-                </div>
-            </div>
-
             <div className="flex flex-col items-center md:items-start gap-4 w-full h-full">
+                <FiltersSection
+                    setYear={setYear}
+                    yearDefaultValue={[params.year, params.year]}
+                    setGenre={setGenre}
+                    genreDefaultValue={genreDefaultValue}
+                />
                 <Input
                     search
                     value={title}
@@ -164,9 +127,6 @@ const SearchView: FC = () => {
                     containerClassName="w-[400px] border-white"
                     placeholder="Название фильма"
                     crossIconProps={{
-                        onClick: () => {
-                            setTitle('');
-                        },
                         className:
                             'cursor-pointer transition duration-200' +
                             (title ? 'opacity-100' : ' opacity-0'),

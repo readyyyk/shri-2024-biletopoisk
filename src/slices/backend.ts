@@ -2,13 +2,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { RateResultSchema, SearchResultsSchema } from '@/schemas/api.ts';
-import { FullMovieInfoSchema, type GENRES_ENG } from '@/schemas/film.ts';
+import { FullMovieInfoSchema } from '@/schemas/film.ts';
 import { SuccessLoginSchema } from '@/schemas/login.ts';
 import { type RootState } from '@/store.ts';
 
 export type GetPageOptions = {
     page?: number;
-    genre?: GENRES_ENG;
+    genre?: string; //GENRES_ENG;
     year?: string;
     title?: string;
 };

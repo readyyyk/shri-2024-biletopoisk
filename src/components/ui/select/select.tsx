@@ -43,6 +43,16 @@ const CurrentValue: FC<{ placeholder?: string }> = (props) => {
     );
 };
 
+const ContainerWrapper: FC<{ children?: ReactNode }> = (props) => {
+    const { isOpen, setIsOpen } = useSelectContext();
+
+    return (
+        <OptionsContainer isOpen={isOpen} setIsOpen={setIsOpen}>
+            {props.children}
+        </OptionsContainer>
+    );
+};
+
 type Props = HTMLAttributes<HTMLDivElement> & {
     onOpenChange?: (isOpen: boolean) => void;
     onValueChange?: (value: string) => void;
@@ -67,7 +77,7 @@ const Select: FC<Props> = ({
         >
             <div {...props} className={cn('max-w-96 relative', className)}>
                 <CurrentValue placeholder={placeholder} />
-                <OptionsContainer> {children} </OptionsContainer>
+                <ContainerWrapper> {children} </ContainerWrapper>
             </div>
         </SelectContextProvider>
     );
