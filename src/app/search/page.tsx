@@ -1,6 +1,8 @@
+'use client';
+
 import { type FC, type ReactNode, useEffect, useState } from 'react';
 
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 
 import Input from '@/components/ui/input.tsx';
 
@@ -11,6 +13,7 @@ import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
 import useDebounce from '@/hooks/use-debounce.ts';
 import { GENRES_ENtoRU } from '@/schemas/film.ts';
 import { useGetPageQuery } from '@/slices/backend.ts';
+import { setSearchParams } from '@/utils/search.ts';
 
 const NotFound = () => (
     <div className="text-center max-w-96">
@@ -27,7 +30,7 @@ const SearchError = ({ error }: { error: string }) => (
 );
 
 const SearchView: FC = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const searchParams = useSearchParams();
     const [params, setParams] = useState({
         title: searchParams.get('title') || '',
         genre: searchParams.get('genre') || '',
@@ -41,7 +44,7 @@ const SearchView: FC = () => {
             prev.set('page', page.toString());
             return prev;
         });
-    }, [page, setSearchParams]);
+    }, [page]);
     useEffect(() => {
         setSearchParams((prev) => {
             for (const key of ['title', 'year', 'genre'] as const) {
@@ -57,7 +60,7 @@ const SearchView: FC = () => {
             }
             return prev;
         });
-    }, [debouncedParams, searchParams, setSearchParams]);
+    }, [debouncedParams, searchParams]);
 
     const {
         data: films,

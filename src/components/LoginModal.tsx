@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
 import Button from '@/components/ui/button.tsx';
@@ -28,6 +30,7 @@ const LoginModal: FC = () => {
     useEffect(() => {
         if (data) {
             if (data.success) {
+                setErrorMsg('');
                 dispatch(setToken(data.data.token));
                 dispatch(setOpen(false));
             } else {

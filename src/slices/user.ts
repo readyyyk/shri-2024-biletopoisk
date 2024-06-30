@@ -1,33 +1,46 @@
+'use client';
+
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit/react';
 
 import { LOCALSTORAGE_AUTH_KEY } from '@/config.ts';
 
 type State = { logged: false } | { logged: true; token: string };
-const initialToken = localStorage.getItem(LOCALSTORAGE_AUTH_KEY);
-export const initialState: State = initialToken?.length
-    ? {
-          logged: true,
-          token: initialToken,
-      }
-    : {
-          logged: false,
-      };
+
+const initiate = (): State => {
+    if (typeof window === 'undefined') {
+        return {
+            logged: false,
+        };
+    }
+    const initialToken = window.localStorage.getItem(LOCALSTORAGE_AUTH_KEY);
+    const initialState: State = initialToken?.length
+        ? {
+              logged: true,
+              token: initialToken,
+          }
+        : {
+              logged: false,
+          };
+    return initialState;
+};
 
 const userSlice = createSlice({
     name: 'user',
-    initialState: initialState,
+    initialState: initiate(),
     reducers: {
-        setState: (_, action: PayloadAction<typeof initialState>) =>
-            action.payload,
+        setState: (_, action: PayloadAction<State>) => action.payload,
         setToken: (_, action: PayloadAction<string>) => {
             if (action.payload.length) {
-                localStorage.setItem(LOCALSTORAGE_AUTH_KEY, action.payload);
+                window.localStorage.setItem(
+                    LOCALSTORAGE_AUTH_KEY,
+                    action.payload,
+                );
                 return {
                     logged: true,
                     token: action.payload,
                 };
             } else {
-                localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
+                window.localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
                 return {
                     logged: false,
                 };

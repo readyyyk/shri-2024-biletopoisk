@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, type MouseEvent } from 'react';
 
 import StarIcon from '@/components/icons/StarIcon.tsx';

@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 import { CleverStarRate } from '@/components/StarRate.tsx';
 import type { ShortMovieInfo } from '@/schemas/film.ts';
@@ -9,7 +9,7 @@ type Props = ShortMovieInfo;
 const FilmPreview: FC<Props> = (props) => {
     return (
         <Link
-            to={'/movie/' + props.id}
+            href={'/movie/' + props.id}
             className="flex justify-between transition bg-white hover:bg-[#F8F8F8] rounded-lg p-6 w-full"
         >
             <div className="gap-6 flex items-start">

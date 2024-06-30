@@ -1,3 +1,5 @@
+'use client';
+
 import type { ButtonHTMLAttributes, FC } from 'react';
 
 import { cn } from '@/utils/cn.ts';

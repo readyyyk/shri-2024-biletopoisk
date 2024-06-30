@@ -1,29 +1,31 @@
+'use client';
+
 import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { backendApi } from '@/slices/backend.ts';
 import loginModalReducer from '@/slices/login-modal.ts';
 import userRatesReducer from '@/slices/user-rates.ts';
 import userReducer from '@/slices/user.ts';
 
-export const store = configureStore({
-    reducer: {
-        [backendApi.reducerPath]: backendApi.reducer,
-        loginModalSlice: loginModalReducer,
-        userSlice: userReducer,
-        ratesSlice: userRatesReducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(backendApi.middleware),
-});
+export const makeStore = () => {
+    const store = configureStore({
+        reducer: {
+            [backendApi.reducerPath]: backendApi.reducer,
+            loginModalSlice: loginModalReducer,
+            userSlice: userReducer,
+            ratesSlice: userRatesReducer,
+        },
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware().concat(backendApi.middleware),
+    });
+    return store;
+};
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();
-
-// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
-// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
-setupListeners(store.dispatch);
+export const useAppStore = useStore.withTypes<AppStore>();

@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, type InputHTMLAttributes, useRef } from 'react';
 
 import CircledCrossIcon from '@/components/icons/CircledCrossIcon.tsx';

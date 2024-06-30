@@ -1,3 +1,5 @@
+'use client';
+
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit/react';
 
 import { LOCALSTORAGE_USER_RATES_KEY } from '@/config.ts';
@@ -7,7 +9,10 @@ import {
     type SingleRate,
 } from '@/schemas/localstorageRates.ts';
 
-const initialRatesStr = localStorage.getItem(LOCALSTORAGE_USER_RATES_KEY) ?? '';
+const initialRatesStr: string =
+    (typeof window !== 'undefined'
+        ? window.localStorage.getItem(LOCALSTORAGE_USER_RATES_KEY)
+        : '') ?? '';
 
 let parsed: unknown;
 try {
@@ -37,7 +42,7 @@ const userRatesSlice = createSlice({
     reducers: {
         setSingle: (state, { payload }: PayloadAction<SingleRate>) => {
             state[payload.id] = payload.value;
-            localStorage.setItem(
+            window.localStorage.setItem(
                 LOCALSTORAGE_USER_RATES_KEY,
                 JSON.stringify(state),
             );

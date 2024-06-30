@@ -1,3 +1,5 @@
+'use client';
+
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit/react';
 
 const loginModalSlice = createSlice({

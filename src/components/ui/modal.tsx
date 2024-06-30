@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, type ReactNode } from 'react';
 
 import ReactDOM from 'react-dom';
@@ -11,6 +13,9 @@ interface ModalProps {
 }
 
 const Modal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
+    if (typeof window === 'undefined') {
+        return null;
+    }
     return ReactDOM.createPortal(
         <div
             onClick={onClose}
@@ -21,7 +26,7 @@ const Modal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
         >
             <div onClick={(e) => e.stopPropagation()}>{children}</div>
         </div>,
-        document.body,
+        window.document.body,
     );
 };
 

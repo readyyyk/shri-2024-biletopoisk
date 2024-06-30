@@ -1,7 +1,9 @@
+'use client';
+
 import { type FC } from 'react';
 
 import { skipToken } from '@reduxjs/toolkit/query';
-import { redirect, useParams } from 'react-router-dom';
+import { redirect } from 'next/navigation';
 
 import {
     Carousel,
@@ -15,8 +17,11 @@ import FilmCard from '@/components/FilmCard.tsx';
 import LoaderIcon from '@/components/icons/LoaderIcon.tsx';
 import { useGetFullMovieQuery } from '@/slices/backend.ts';
 
-const SingleMovie: FC = () => {
-    const { movieId: _movieId } = useParams();
+type Props = {
+    params: { movieId: string };
+};
+const Page: FC<Props> = (props) => {
+    const { movieId: _movieId } = props.params;
 
     const movieId = parseInt(_movieId ?? '');
 
@@ -42,7 +47,6 @@ const SingleMovie: FC = () => {
 
     if (!movieId) {
         redirect('error/404');
-        return;
     }
 
     return (
@@ -70,4 +74,4 @@ const SingleMovie: FC = () => {
     );
 };
 
-export default SingleMovie;
+export default Page;

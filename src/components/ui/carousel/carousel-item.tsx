@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, type HTMLAttributes, useEffect, useRef } from 'react';
 
 import { useCarouselContext } from '@/components/ui/carousel/carousel-context.tsx';
