@@ -75,9 +75,6 @@ const SearchView: FC = () => {
     const setYear = (year: string) => setParams((p) => ({ ...p, year }));
     const setGenre = (genre: string) => setParams((p) => ({ ...p, genre }));
 
-    // const setYear = (year: string) => {};
-    // const setGenre = (genre: string) => console.log;
-
     const genreDefaultValue: [string, string] = [
         params.genre,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -113,13 +110,13 @@ const SearchView: FC = () => {
 
     return (
         <div className="flex flex-col md:flex-row justify-start items-start gap-5 flex-1">
+            <FiltersSection
+                setYear={setYear}
+                yearDefaultValue={[params.year, params.year]}
+                setGenre={setGenre}
+                genreDefaultValue={genreDefaultValue}
+            />
             <div className="flex flex-col items-center md:items-start gap-4 w-full h-full">
-                <FiltersSection
-                    setYear={setYear}
-                    yearDefaultValue={[params.year, params.year]}
-                    setGenre={setGenre}
-                    genreDefaultValue={genreDefaultValue}
-                />
                 <Input
                     search
                     value={title}
