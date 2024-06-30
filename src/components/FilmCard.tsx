@@ -1,5 +1,7 @@
 import { type FC } from 'react';
 
+import Image from 'next/image';
+
 import { CleverStarRate } from '@/components/StarRate.tsx';
 import { type FullMovieInfo } from '@/schemas/film.ts';
 
@@ -8,12 +10,12 @@ type Props = FullMovieInfo;
 const FilmCard: FC<Props> = (props) => {
     return (
         <div className="w-full flex gap-8 p-6 bg-white rounded-3xl text-xl">
-            <img
+            <Image
                 className="rounded-lg"
                 src={props.poster}
                 alt={props.title + ' poster'}
-                width={'400px'}
-                height={'500px'}
+                width={400}
+                height={500}
             />
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between">

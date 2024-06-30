@@ -1,6 +1,11 @@
-import { type FC } from 'react';
+import { type FC, type ReactNode } from 'react';
 
 import { getSearchPage } from '@/api/posts.ts';
+import ClientFiltersSection from '@/app/search/[[...search]]/_components/ClientFiltersSection.tsx';
+import ClientSearchInput from '@/app/search/[[...search]]/_components/ClientSearchInput.tsx';
+import ClientSearchPagination from '@/app/search/[[...search]]/_components/ClientSearchPagination.tsx';
+import { SearchContextProvider } from '@/app/search/[[...search]]/search-context.tsx';
+import FilmPreview from '@/components/FIlmPreview.tsx';
 
 export async function generateStaticParams() {
     return [{ search: [''], searchParams: {} }];
@@ -23,23 +28,49 @@ const SearchError = ({ error }: { error: string }) => (
 type Props = { searchParams: Record<string, string> };
 const SearchView: FC<Props> = async (props) => {
     const { searchParams } = props;
-    const films = await getSearchPage({
-        title: searchParams['title'],
-        page: parseInt(searchParams['page']) ?? 1,
-        year: searchParams['year'],
-        genre: searchParams['genre'],
-    });
 
+    const realParams = {
+        title: searchParams['title'] ?? '',
+        page: Number.isNaN(parseInt(searchParams['page']))
+            ? 1
+            : parseInt(searchParams['page']),
+        year: searchParams['year'] ?? '',
+        genre: searchParams['genre'] ?? '',
+    };
+
+    const films = await getSearchPage(realParams);
+
+    let mainContent: ReactNode;
     if (!films.success) {
-        console.log(films.error.message, films.error);
-        return <SearchError error={films.error.message} />;
+        const err = JSON.stringify(films.error, null, 4);
+        mainContent = <SearchError error={err} />;
+    } else if (!films.data.search_result.length) {
+        mainContent = <NotFound />;
+    } else {
+        const previews = films.data.search_result.map((film) => (
+            <FilmPreview {...film} key={'film' + film.id} />
+        ));
+        mainContent = (
+            <>
+                {previews}
+                <ClientSearchPagination total={films.data?.total_pages} />
+            </>
+        );
     }
 
-    if (Math.random() > 0.5) {
-        return <NotFound />;
-    }
-
-    return <pre>{JSON.stringify(films.data, null, 4)}</pre>;
+    return (
+        <div className="flex flex-col md:flex-row justify-start items-start gap-5 flex-1">
+            <SearchContextProvider {...realParams} searchParams={searchParams}>
+                <ClientFiltersSection />
+                <div className="flex flex-col items-center md:items-start gap-4 w-full h-full">
+                    <ClientSearchInput />
+                    <main className="w-full flex justify-center items-center flex-col gap-4 flex-1">
+                        {mainContent}
+                    </main>
+                </div>
+            </SearchContextProvider>
+        </div>
+    );
 };
 
 export default SearchView;

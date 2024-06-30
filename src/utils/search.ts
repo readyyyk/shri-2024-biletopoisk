@@ -11,5 +11,5 @@ export const setSearchParams = (
 
     const newSearchParams = callback(previous);
 
-    window.history.pushState({}, '', '?' + newSearchParams.toString());
+    window.location.search = newSearchParams.toString();
 };

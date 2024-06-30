@@ -1,5 +1,6 @@
 import { type FC } from 'react';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { CleverStarRate } from '@/components/StarRate.tsx';
@@ -13,11 +14,11 @@ const FilmPreview: FC<Props> = (props) => {
             className="flex justify-between transition bg-white hover:bg-[#F8F8F8] rounded-lg p-6 w-full"
         >
             <div className="gap-6 flex items-start">
-                <img
+                <Image
                     src={props.poster}
                     alt={props.title + 'poster'}
-                    width={'100px'}
-                    height={'120px'}
+                    width={100}
+                    height={120}
                     className="rounded-lg"
                 />
                 <div className="flex flex-col gap-6 w-fit text-[#1B1F23]">
