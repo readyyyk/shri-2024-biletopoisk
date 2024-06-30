@@ -127,6 +127,7 @@ const SearchView: FC = () => {
                     containerClassName="w-[400px] border-white"
                     placeholder="Название фильма"
                     crossIconProps={{
+                        onClick: () => setTitle(''),
                         className:
                             'cursor-pointer transition duration-200' +
                             (title ? 'opacity-100' : ' opacity-0'),
